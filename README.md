@@ -1,8 +1,7 @@
 # nkanphia-etsiphen
 
-The algorithm is a slightly-modified version of that originally proposed by Dijkstra which also takes care of [unary operators and single-argument functions](https://www.andr.mu/logs/the-shunting-yard-algorithm/).
-
-There is also a REPL along with an evaluator that evaluates the given expressions on the fly.
+The algorithm is of the Shunting Yard algorithm created by Dijkstra. There is also a REPL along with an evaluator that evaluates the given expressions on the fly.
+This projects supports the five basic arithmetic operators - addition, subtraction, multiplication, division, and exponentiation, along with the use of parentheses.
 
 Etymology: "nkanphia-etsiphen" is a calque of "shunting-yard" in [Lotha](https://en.wikipedia.org/wiki/Lotha_language).
 
@@ -32,8 +31,6 @@ $ mvn exec:java -Dexec.mainClass=com.z0ltan.compilers.App
 
 ```
 $ mvn exec:java -Dexec.mainClass=com.z0ltan.compilers.App
-
-
 
 ```
 

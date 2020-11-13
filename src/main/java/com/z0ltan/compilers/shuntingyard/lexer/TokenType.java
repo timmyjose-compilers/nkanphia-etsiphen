@@ -1,17 +1,11 @@
 package com.z0ltan.compilers.shuntingyard.lexer;
 
 public enum TokenType {
-  ASTERISK,
-  CARET,
   EOF,
-  FUNCTION,
   ILLEGAL,
-  NUMBER,
+  LEFT_OPERATOR,
   LPAREN,
-  MINUS,
-  PERIOD,
-  PLUS,
+  NUMBER,
+  RIGHT_OPERATOR,
   RPAREN,
-  SLASH,
-  TILDE,
 }

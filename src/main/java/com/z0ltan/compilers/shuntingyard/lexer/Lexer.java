@@ -50,10 +50,22 @@ public class Lexer {
     return source.substring(startPosition, position);
   }
 
-  String readInteger() {
+  String readNumber() {
     int startPosition = position;
+
+    if (currentChar == '-') {
+      readChar();
+    }
+
     while (Character.isDigit(currentChar)) {
       readChar();
+    }
+
+    if (currentChar == '.') {
+      readChar();
+      while (Character.isDigit(currentChar)) {
+        readChar();
+      }
     }
     return source.substring(startPosition, position);
   }
@@ -66,20 +78,16 @@ public class Lexer {
     switch (currentChar) {
       case '\u0000':
         token = new Token(TokenType.EOF, ""); break;
-      case '.':
-        token = new Token(TokenType.PERIOD, "."); break;
       case '^':
-        token = new Token(TokenType.CARET, "^"); break;
+        token = new Token(TokenType.RIGHT_OPERATOR, "^"); break;
       case '+':
-        token = new Token(TokenType.PLUS, "+"); break;
+        token = new Token(TokenType.LEFT_OPERATOR, "+"); break;
       case '-':
-        token = new Token(TokenType.MINUS, "-"); break;
+        token = new Token(TokenType.LEFT_OPERATOR, "-"); break;
       case '*':
-        token = new Token(TokenType.ASTERISK, "*"); break;
+        token = new Token(TokenType.LEFT_OPERATOR, "*"); break;
       case '/':
-        token = new Token(TokenType.SLASH, "/"); break;
-      case '~':
-        token = new Token(TokenType.TILDE, "~"); break;
+        token = new Token(TokenType.LEFT_OPERATOR, "/"); break;
       case '(':
         token = new Token(TokenType.LPAREN, "("); break;
       case ')':
@@ -96,65 +104,8 @@ public class Lexer {
       case '9': 
         {
           TokenType kind = TokenType.NUMBER;
-          String spelling = readInteger();
+          String spelling = readNumber();
           token = new Token(kind, spelling);
-          return token;
-        }
-
-      case 'a':
-      case 'b':
-      case 'c':
-      case 'd':
-      case 'e':
-      case 'f':
-      case 'g':
-      case 'h':
-      case 'i':
-      case 'j':
-      case 'k':
-      case 'l':
-      case 'm':
-      case 'n':
-      case 'o':
-      case 'p':
-      case 'q':
-      case 's':
-      case 't':
-      case 'u':
-      case 'v':
-      case 'w':
-      case 'x':
-      case 'y':
-      case 'z':
-      case 'A':
-      case 'B':
-      case 'C':
-      case 'D':
-      case 'E':
-      case 'F':
-      case 'G':
-      case 'H':
-      case 'I':
-      case 'J':
-      case 'K':
-      case 'L':
-      case 'M':
-      case 'N':
-      case 'O':
-      case 'P':
-      case 'Q':
-      case 'S':
-      case 'T':
-      case 'U':
-      case 'V':
-      case 'W':
-      case 'X':
-      case 'Y':
-      case 'Z': 
-        {
-          TokenType kind = TokenType.FUNCTION;
-          String spelling = readFunctionName();
-          token  = new Token(kind, spelling);
           return token;
         }
 
