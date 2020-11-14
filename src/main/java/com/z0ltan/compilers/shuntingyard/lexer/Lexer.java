@@ -2,6 +2,8 @@ package com.z0ltan.compilers.shuntingyard.lexer;
 
 import com.z0ltan.compilers.shuntingyard.lexer.TokenType;
 import com.z0ltan.compilers.shuntingyard.lexer.Token;
+import com.z0ltan.compilers.shuntingyard.lexer.Associativity;
+import com.z0ltan.compilers.shuntingyard.lexer.Precedence;
 
 public class Lexer {
   private String source;
@@ -79,15 +81,15 @@ public class Lexer {
       case '\u0000':
         token = new Token(TokenType.EOF, ""); break;
       case '^':
-        token = new Token(TokenType.RIGHT_OPERATOR, "^"); break;
-      case '+':
-        token = new Token(TokenType.LEFT_OPERATOR, "+"); break;
-      case '-':
-        token = new Token(TokenType.LEFT_OPERATOR, "-"); break;
+        token = new Token(TokenType.OPERATOR, "^", Precedence.LEVEL_TEN, Associativity.RIGHT); break;
       case '*':
-        token = new Token(TokenType.LEFT_OPERATOR, "*"); break;
+        token = new Token(TokenType.OPERATOR, "*", Precedence.LEVEL_SEVEN, Associativity.LEFT); break;
       case '/':
-        token = new Token(TokenType.LEFT_OPERATOR, "/"); break;
+        token = new Token(TokenType.OPERATOR, "/", Precedence.LEVEL_SEVEN, Associativity.LEFT); break;
+      case '+':
+        token = new Token(TokenType.OPERATOR, "+", Precedence.LEVEL_FOUR, Associativity.LEFT); break;
+      case '-':
+        token = new Token(TokenType.OPERATOR, "-", Precedence.LEVEL_FOUR, Associativity.LEFT); break;
       case '(':
         token = new Token(TokenType.LPAREN, "("); break;
       case ')':

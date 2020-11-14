@@ -1,8 +1,9 @@
 package com.z0ltan.compilers.shuntingyard.ast;
 
 public class PowItem extends OperatorItem {
-  public PowItem(int precedence, Associativity associativity) {
-    super(precedence, associativity);
+  @Override
+  public NumberItem eval(NumberItem n1, NumberItem n2) {
+    return new NumberItem(Math.pow(n1.getValue(), n2.getValue()));
   }
 
   @Override
@@ -11,8 +12,6 @@ public class PowItem extends OperatorItem {
       return false;
     }
 
-    PowItem otherItem = (PowItem)other;
-
-    return otherItem.precedence == this.precedence && otherItem.associativity == this.associativity;
+    return true;
   }
 }

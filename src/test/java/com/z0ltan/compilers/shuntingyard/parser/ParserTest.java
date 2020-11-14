@@ -45,7 +45,7 @@ public class ParserTest extends TestCase {
     ParserTestCase[] testCases = new ParserTestCase[] {
       new ParserTestCase(new NumberItem(1.09)),
           new ParserTestCase(new NumberItem(2.23)),
-          new ParserTestCase(new AddItem(4, Associativity.LEFT)),
+          new ParserTestCase(new AddItem()),
     };
 
     Parser parser = new Parser(new Lexer(input));
@@ -61,12 +61,12 @@ public class ParserTest extends TestCase {
       new ParserTestCase(new NumberItem(1)),
           new ParserTestCase(new NumberItem(3)),
           new ParserTestCase(new NumberItem(9)),
-          new ParserTestCase(new MulItem(7, Associativity.LEFT)),
+          new ParserTestCase(new MulItem()),
           new ParserTestCase(new NumberItem(2)),
           new ParserTestCase(new NumberItem(4)),
-          new ParserTestCase(new AddItem(4, Associativity.LEFT)),
-          new ParserTestCase(new DivItem(7, Associativity.LEFT)),
-          new ParserTestCase(new AddItem(4, Associativity.LEFT)),
+          new ParserTestCase(new AddItem()),
+          new ParserTestCase(new DivItem()),
+          new ParserTestCase(new AddItem()),
     };
 
     Parser parser = new Parser(new Lexer(input));
@@ -83,16 +83,53 @@ public class ParserTest extends TestCase {
       new ParserTestCase(new NumberItem(3)),
       new ParserTestCase(new NumberItem(4)),
       new ParserTestCase(new NumberItem(2)),
-      new ParserTestCase(new MulItem(7, Associativity.LEFT)),
+      new ParserTestCase(new MulItem()),
       new ParserTestCase(new NumberItem(1)),
       new ParserTestCase(new NumberItem(5)),
-      new ParserTestCase(new SubItem(4, Associativity.LEFT)),
+      new ParserTestCase(new SubItem()),
       new ParserTestCase(new NumberItem(2)),
       new ParserTestCase(new NumberItem(3)),
-      new ParserTestCase(new PowItem(10, Associativity.RIGHT)),
-      new ParserTestCase(new PowItem(10, Associativity.RIGHT)),
-      new ParserTestCase(new DivItem(7, Associativity.LEFT)),
-      new ParserTestCase(new AddItem(4, Associativity.LEFT)),
+      new ParserTestCase(new PowItem()),
+      new ParserTestCase(new PowItem()),
+      new ParserTestCase(new DivItem()),
+      new ParserTestCase(new AddItem()),
+    };
+
+    Parser parser = new Parser(new Lexer(input));
+    Queue<Item> ast = parser.parse();
+
+    for (int i = 0; i < testCases.length; i++) {
+      assertEquals(testCases[i].expectedItem, ast.poll());
+    }
+  }
+
+
+  public void testParseExpression4() {
+    String input = "1 + 2 * 3";
+    ParserTestCase[] testCases = new ParserTestCase[] {
+      new ParserTestCase(new NumberItem(1)),
+      new ParserTestCase(new NumberItem(2)),
+      new ParserTestCase(new NumberItem(3)),
+      new ParserTestCase(new MulItem()),
+      new ParserTestCase(new AddItem()),
+    };
+
+    Parser parser = new Parser(new Lexer(input));
+    Queue<Item> ast = parser.parse();
+
+    for (int i = 0; i < testCases.length; i++) {
+      assertEquals(testCases[i].expectedItem, ast.poll());
+    }
+  }
+
+  public void testParseExpression5() {
+    String input = "1 * 2 + 3";
+    ParserTestCase[] testCases = new ParserTestCase[] {
+      new ParserTestCase(new NumberItem(1)),
+      new ParserTestCase(new NumberItem(2)),
+      new ParserTestCase(new MulItem()),
+      new ParserTestCase(new NumberItem(3)),
+      new ParserTestCase(new AddItem()),
     };
 
     Parser parser = new Parser(new Lexer(input));

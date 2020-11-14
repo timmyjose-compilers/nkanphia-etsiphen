@@ -6,6 +6,8 @@ import java.util.Stack;
 import com.z0ltan.compilers.shuntingyard.lexer.Lexer;
 import com.z0ltan.compilers.shuntingyard.lexer.Token;
 import com.z0ltan.compilers.shuntingyard.lexer.TokenType;
+import com.z0ltan.compilers.shuntingyard.lexer.Associativity;
+import com.z0ltan.compilers.shuntingyard.lexer.Precedence;
 import com.z0ltan.compilers.shuntingyard.ast.*;
 
 public class Parser {
@@ -36,67 +38,60 @@ public class Parser {
     return ast;
   }
 
+  Item makeItem(Token token) {
+    switch (token.getKind()) {
+      case OPERATOR:
+        switch (token.getSpelling()) {
+          case "+": return new AddItem();
+          case "-": return new SubItem();
+          case "*": return new MulItem();
+          case "/": return new DivItem();
+          case "^": return new PowItem();
+          default: throw new RuntimeException("unknown operator - " + token.getSpelling());
+        }
+      case NUMBER: return new NumberItem(Double.parseDouble(token.getSpelling()));
+      default: throw new RuntimeException("unexpected token kind - " + token.getKind());
+    }
+  }
+
   void executeShuntingYard() {
-    Stack<Item> st = new Stack<>();
+    Stack<Token> st = new Stack<>();
 
     while (currentToken.getKind() != TokenType.EOF) {
       switch (currentToken.getKind()) {
         case NUMBER:
           {
-            ast.add(new NumberItem(Double.parseDouble(currentToken.getSpelling())));
+            ast.add(makeItem(currentToken));
             acceptIt();
           }
           break;
 
-        case LEFT_OPERATOR:
+        case OPERATOR:
           {
-            OperatorItem op = null;
-            switch (currentToken.getSpelling()){
-              case "+" : op = new AddItem(4, Associativity.LEFT); break;
-              case "-": op = new SubItem(4, Associativity.LEFT); break;
-              case "*": op = new MulItem(7, Associativity.LEFT); break;
-              case "/": op = new DivItem(7, Associativity.LEFT); break;
-              default: throw new RuntimeException("unknown left associative operator - " + currentToken.getSpelling());
-            }
-            while (!st.isEmpty() && st.peek().isOperator() && ((OperatorItem)st.peek()).getPrecedence() >= op.getPrecedence()) {
-              ast.add(st.pop());
-            }
+            OperatorItem op = (OperatorItem)makeItem(currentToken);
 
-            st.push(op);
-            acceptIt();
-          }
-          break;
+            while (!st.isEmpty() && 
+                ((currentToken.getAssociativity() == Associativity.LEFT && st.peek().getPrecedence().getLevel() >= currentToken.getPrecedence().getLevel()) ||
+                 (currentToken.getAssociativity() == Associativity.RIGHT && st.peek().getPrecedence().getLevel() > currentToken.getPrecedence().getLevel()))) {
+              ast.add(makeItem(st.pop()));
+                 }
 
-        case RIGHT_OPERATOR:
-          {
-            OperatorItem op = null;
-            switch (currentToken.getSpelling()) {
-              case "^": op = new PowItem(10, Associativity.RIGHT); break;
-              default:
-                        throw new RuntimeException("unknown right-associative operator - " + currentToken.getSpelling());
-
-            }
-
-            while (!st.isEmpty() && st.peek().isOperator() && ((OperatorItem)st.peek()).getPrecedence() > op.getPrecedence()) {
-              ast.add(st.pop());
-            }
-            st.push(op);
+            st.push(currentToken);
             acceptIt();
           }
           break;
 
         case LPAREN:
           {
-            Item leftParen = new LParenItem();
-            st.push(leftParen);
+            st.push(currentToken);
             acceptIt();
           }
           break;
 
         case RPAREN:
           {
-            while (!st.isEmpty() && !(st.peek() instanceof LParenItem)) {
-              ast.add(st.pop());
+            while (!st.isEmpty() && !st.peek().getSpelling().equals("(")) {
+              ast.add(makeItem(st.pop()));
             }
 
             if (st.isEmpty()) {
@@ -106,14 +101,18 @@ public class Parser {
             st.pop();
             acceptIt();
           }
-      }
+          break;
 
+        case ILLEGAL: throw new RuntimeException("got an illegal token");
+      }
     }
+
     while (!st.isEmpty()) {
-      if (st.peek() instanceof LParenItem) {
+      if (st.peek().getSpelling().equals("(")) {
         throw new RuntimeException("imbalanced parentheses - extra left parenthesis left over");
       }
-      ast.add(st.pop());
+
+      ast.add(makeItem(st.pop()));
     }
   }
 }

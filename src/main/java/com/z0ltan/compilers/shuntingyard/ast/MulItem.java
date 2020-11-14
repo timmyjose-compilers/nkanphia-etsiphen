@@ -1,8 +1,9 @@
 package com.z0ltan.compilers.shuntingyard.ast;
 
 public class MulItem extends OperatorItem {
-  public MulItem(int precedence, Associativity associativity) {
-    super(precedence, associativity);
+  @Override
+  public NumberItem eval(NumberItem n1, NumberItem n2) {
+    return new NumberItem(n1.getValue() * n2.getValue());
   }
 
   @Override
@@ -11,8 +12,6 @@ public class MulItem extends OperatorItem {
       return false;
     }
 
-    MulItem otherItem = (MulItem)other;
-
-    return otherItem.precedence == this.precedence && otherItem.associativity == this.associativity;
+    return true;
   }
 }
